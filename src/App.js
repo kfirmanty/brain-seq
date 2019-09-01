@@ -134,6 +134,17 @@ const Description = () => (
           <td>C</td>
           <td>Replaces opcode at random position with random opcode</td>
         </tr>
+        <tr>
+          <td>r</td>
+          <td>
+            Inserts random value to cell under the pointer and removes itself
+            from program
+          </td>
+        </tr>
+        <tr>
+          <td>R</td>
+          <td>Inserts random value to cell under the pointer</td>
+        </tr>
       </tbody>
     </table>
   </section>

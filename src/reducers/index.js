@@ -4,11 +4,11 @@ const initialState = {
   synth: null,
   interpreter: {
     bpm: 120,
-    memory: [],
     memoryPointer: 0,
     programPointer: 0,
     program: "",
     memorySize: 16,
+    memory: Array(16).fill(0),
     scale: "chromatic",
     maxMemoryVal: 16,
     minMemoryVal: 0
@@ -16,8 +16,8 @@ const initialState = {
   running: false
 };
 
-const opcodes = "<>+-.cCjJ";
-const opcodesNonMatchRe = /[^+-[\].cCjJ<>]/g;
+const opcodes = "<>+-.cCjJrR";
+const opcodesNonMatchRe = /[^+-[\].cCjJ<>rR]/g;
 
 const merge = (o1, o2) => {
   return Object.assign({}, o1, o2);
@@ -53,6 +53,44 @@ const changeRandomOpcode = program => {
   );
 };
 
+const findMatchingLoopEnd = (program, programPointer) => {
+  let newPointer = programPointer;
+  let openingCount = -1;
+  for (let i = newPointer; i < program.length - programPointer; i++) {
+    const c = program[i];
+    if (c === "[") {
+      openingCount += 1;
+    } else if (c === "]") {
+      if (openingCount === 0) {
+        newPointer = i;
+        break;
+      } else {
+        openingCount -= 1;
+      }
+    }
+  }
+  return newPointer;
+};
+
+const findMatchingLoopStart = (program, programPointer) => {
+  let newPointer = programPointer;
+  let closingCount = -1;
+  for (let i = newPointer; i >= 0; i--) {
+    const c = program[i];
+    if (c === "]") {
+      closingCount += 1;
+    } else if (c === "[") {
+      if (closingCount === 0) {
+        newPointer = i;
+        break;
+      } else {
+        closingCount -= 1;
+      }
+    }
+  }
+  return newPointer;
+};
+
 const tick = state => {
   const interpreter = Object.assign({}, state.interpreter);
   const synth = state.synth;
@@ -70,15 +108,15 @@ const tick = state => {
   switch (currentOp) {
     case "+":
       memory[memoryPointer] =
-        (memory[memoryPointer] || 0) + 1 > maxMemoryVal
+        memory[memoryPointer] + 1 > maxMemoryVal
           ? minMemoryVal
-          : (memory[memoryPointer] || 0) + 1;
+          : memory[memoryPointer] + 1;
       break;
     case "-":
-      memory[memoryPointer] = Math.max(
-        (memory[memoryPointer] || 0) - 1,
-        minMemoryVal
-      );
+      memory[memoryPointer] =
+        memory[memoryPointer] - 1 < minMemoryVal
+          ? maxMemoryVal
+          : memory[memoryPointer] - 1;
       break;
     case ">":
       memoryPointer = Math.min(memoryPointer + 1, memorySize);
@@ -89,7 +127,7 @@ const tick = state => {
     case ".":
       synth.play({
         env: { hold: 0.5, release: 1 },
-        pitch: memoryToFreq(scale, memory[memoryPointer] || 0)
+        pitch: memoryToFreq(scale, memory[memoryPointer])
       }); //FIXME: awful side effect
       break;
     case "j": //jumps to random point in program and opcode removes itself from program
@@ -105,6 +143,25 @@ const tick = state => {
       break;
     case "C":
       program = changeRandomOpcode(program);
+      break;
+    case "[":
+      programPointer =
+        memory[memoryPointer] === 0
+          ? findMatchingLoopEnd(program, programPointer)
+          : programPointer;
+      break;
+    case "]":
+      programPointer =
+        memory[memoryPointer] !== 0
+          ? findMatchingLoopStart(program, programPointer)
+          : programPointer;
+      break;
+    case "r":
+      program = removeOpcodeAtProgramPointer(program, programPointer);
+      memory[memoryPointer] = randInt(maxMemoryVal);
+      break;
+    case "R":
+      memory[memoryPointer] = randInt(maxMemoryVal);
       break;
     default:
       break;
