@@ -10,8 +10,9 @@ const initialState = {
     memorySize: 16,
     memory: Array(16).fill(0),
     scale: "chromatic",
-    maxMemoryVal: 16,
-    minMemoryVal: 0
+    maxMemoryVal: 15,
+    minMemoryVal: 0,
+    baseFreq: 440
   },
   running: false
 };
@@ -27,11 +28,10 @@ const randInt = to => {
   return Math.floor(Math.random() * to);
 };
 
-const memoryToFreq = (scaleName, val) => {
+const memoryToFreq = (scaleName, baseFreq, val) => {
   const scale = scales[scaleName];
-  const baseFreq = 440;
   const octave = Math.floor(val / scale.length);
-  const octaveFreq = baseFreq + baseFreq * octave;
+  const octaveFreq = baseFreq * Math.pow(2, octave);
   const step = Math.pow(1.0595, scale[val % scale.length]);
   return octaveFreq * step;
 };
@@ -102,7 +102,8 @@ const tick = state => {
     memorySize,
     scale,
     maxMemoryVal,
-    minMemoryVal
+    minMemoryVal,
+    baseFreq
   } = interpreter;
   const currentOp = program[programPointer];
   switch (currentOp) {
@@ -128,7 +129,7 @@ const tick = state => {
     case ".":
       synth.play({
         env: { hold: 0.5 },
-        pitch: memoryToFreq(scale, memory[memoryPointer])
+        pitch: memoryToFreq(scale, baseFreq, memory[memoryPointer])
       }); //FIXME: awful side effect
       break;
     case "j": //jumps to random point in program and opcode removes itself from program
@@ -203,6 +204,10 @@ const rootReducer = (state = initialState, action) => {
     case "SET_SCALE":
       return Object.assign({}, state, {
         interpreter: merge(state.interpreter, { scale: action.scale })
+      });
+    case "SET_BASE_FREQ":
+      return Object.assign({}, state, {
+        interpreter: merge(state.interpreter, { baseFreq: action.baseFreq })
       });
     case "TICK":
       return tick(state);

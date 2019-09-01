@@ -16,6 +16,11 @@ export const setScale = scale => ({
   scale
 });
 
+export const setBaseFreq = baseFreq => ({
+  type: "SET_BASE_FREQ",
+  baseFreq
+});
+
 const tick = () => ({ type: "TICK" });
 
 const tickLoop = () => (dispatch, getState) => {

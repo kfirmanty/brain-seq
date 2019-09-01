@@ -7,7 +7,8 @@ import {
   startInterpreter,
   stopInterpreter,
   setTempo,
-  setScale
+  setScale,
+  setBaseFreq
 } from "./actions/index";
 
 const mapStateToProps = state => ({
@@ -161,6 +162,19 @@ const Tempo = ({ bpm, dispatch }) => (
   </div>
 );
 
+const BaseFreq = ({ baseFreq, dispatch }) => (
+  <div>
+    <p>Base frequency:</p>
+    <input
+      type="number"
+      min="1"
+      max="1000"
+      defaultValue={baseFreq}
+      onBlur={e => dispatch(setBaseFreq(e.target.value))}
+    />
+  </div>
+);
+
 const AppComponent = ({ interpreter, running, dispatch }) => {
   const {
     program,
@@ -168,7 +182,8 @@ const AppComponent = ({ interpreter, running, dispatch }) => {
     memoryPointer,
     memory,
     bpm,
-    scale
+    scale,
+    baseFreq
   } = interpreter;
   return (
     <article>
@@ -176,6 +191,7 @@ const AppComponent = ({ interpreter, running, dispatch }) => {
         <h1>Brain SEQ</h1>
         <Program program={program} dispatch={dispatch} />
         <Tempo bpm={bpm} dispatch={dispatch} />
+        <BaseFreq baseFreq={baseFreq} dispatch={dispatch} />
         <Scale scale={scale} dispatch={dispatch} />
         <Memory memory={memory} />
         <Pointers
