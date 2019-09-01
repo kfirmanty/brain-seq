@@ -17,7 +17,7 @@ const initialState = {
 };
 
 const opcodes = "<>+-.cCjJrR";
-const opcodesNonMatchRe = /[^+-[\].cCjJ<>rR]/g;
+const opcodesNonMatchRe = /[^\+\-\[\]\.cCjJ<>rR]/g;
 
 const merge = (o1, o2) => {
   return Object.assign({}, o1, o2);
