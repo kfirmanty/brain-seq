@@ -11,6 +11,11 @@ export const setTempo = bpm => ({
   bpm
 });
 
+export const setScale = scale => ({
+  type: "SET_SCALE",
+  scale
+});
+
 const tick = () => ({ type: "TICK" });
 
 const interpreterStarted = ({ loopId, synth }) => ({

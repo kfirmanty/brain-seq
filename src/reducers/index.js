@@ -1,10 +1,4 @@
-const scales = {
-  chromatic: [...Array(12).keys()],
-  minor: [0, 2, 3, 5, 7, 8, 10],
-  minorPentatonic: [0, 3, 5, 7, 10],
-  major: [0, 2, 4, 5, 7, 9, 11],
-  majorPentatonic: [0, 4, 5, 7, 11]
-};
+import { scales } from "../utils";
 
 const initialState = {
   synth: null,
@@ -16,7 +10,7 @@ const initialState = {
     program: "",
     loopId: 0,
     memorySize: 16,
-    scale: scales.chromatic
+    scale: "chromatic"
   },
   running: false
 };
@@ -32,7 +26,8 @@ const randInt = to => {
   return Math.floor(Math.random() * to);
 };
 
-const memoryToFreq = (scale, val) => {
+const memoryToFreq = (scaleName, val) => {
+  const scale = scales[scaleName];
   const baseFreq = 440;
   const step = 440 / 12;
   return baseFreq + step * scale[val % scale.length];
@@ -139,6 +134,10 @@ const rootReducer = (state = initialState, action) => {
     case "SET_TEMPO":
       return Object.assign({}, state, {
         interpreter: merge(state.interpreter, { bpm: action.bpm })
+      });
+    case "SET_SCALE":
+      return Object.assign({}, state, {
+        interpreter: merge(state.interpreter, { scale: action.scale })
       });
     case "TICK":
       return tick(state);

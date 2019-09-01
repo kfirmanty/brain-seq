@@ -1,11 +1,13 @@
 /* eslint react/prop-types: 0 */
 import React from "react";
 import { connect } from "react-redux";
+import { scales } from "./utils";
 import {
   setProgram,
   startInterpreter,
   stopInterpreter,
-  setTempo
+  setTempo,
+  setScale
 } from "./actions/index";
 
 const mapStateToProps = state => ({
@@ -36,9 +38,21 @@ const Pointers = ({ programPointer, memoryPointer }) => (
 
 const Memory = ({ memory }) => (
   <div>
-    {" "}
     <p>Memory:</p>
     {memory.map((el, index) => index + ":" + el + ", ")}
+  </div>
+);
+
+const Scale = ({ scale, dispatch }) => (
+  <div>
+    <p>Scale:</p>
+    <select value={scale} onChange={e => dispatch(setScale(e.target.value))}>
+      {Object.keys(scales).map(el => (
+        <option value={el} key={el}>
+          {el}
+        </option>
+      ))}
+    </select>
   </div>
 );
 
@@ -137,13 +151,21 @@ const Tempo = ({ bpm, dispatch }) => (
 );
 
 const AppComponent = ({ interpreter, running, dispatch }) => {
-  const { program, programPointer, memoryPointer, memory, bpm } = interpreter;
+  const {
+    program,
+    programPointer,
+    memoryPointer,
+    memory,
+    bpm,
+    scale
+  } = interpreter;
   return (
     <article>
       <section>
         <h1>Brain SEQ</h1>
         <Program program={program} dispatch={dispatch} />
         <Tempo bpm={bpm} dispatch={dispatch} />
+        <Scale scale={scale} dispatch={dispatch} />
         <Memory memory={memory} />
         <Pointers
           programPointer={programPointer}
