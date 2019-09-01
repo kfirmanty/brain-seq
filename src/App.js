@@ -43,12 +43,8 @@ const Memory = ({ memory }) => (
 );
 
 const PlayButton = ({ dispatch, running }) => (
-  <p>
-    <div
-      onClick={() => dispatch(running ? stopInterpreter() : startInterpreter())}
-    >
-      {running ? "Click to Stop!" : "Click to Start!"}
-    </div>
+  <p onClick={() => dispatch(running ? stopInterpreter() : startInterpreter())}>
+    {running ? "Click to Stop!" : "Click to Start!"}
   </p>
 );
 
@@ -59,66 +55,72 @@ const Description = () => (
     programming language with additional extensions for music.
     <h3>Opcodes</h3>
     <table>
-      <tr>
-        <td>{">"}</td>
-        <td>Moves the pointer to the right</td>
-      </tr>
-      <tr>
-        <td>{"<"}</td>
-        <td>Moves the pointer to the left</td>
-      </tr>
-      <tr>
-        <td>+</td>
-        <td>Increments the memory cell under the pointer</td>
-      </tr>
-      <tr>
-        <td>-</td>
-        <td>Decrements the memory cell under the pointer</td>
-      </tr>
-      <tr>
-        <td>.</td>
-        <td>Triggers a note determined by the memory cell under the pointer</td>
-      </tr>
-      <tr>
-        <td>,</td>
-        <td>Reads value from input - will be only available in O_C version</td>
-      </tr>
-      <tr>
-        <td>[</td>
-        <td>
-          Jumps past the matching ] if the cell under the pointer is 0. If no
-          matching ] is found proceedes as usual
-        </td>
-      </tr>
-      <tr>
-        <td>]</td>
-        <td>
-          Jumps back to the matching [ if the cell under the pointer is nonzero.
-          If no matching [ is found proceedes as usual
-        </td>
-      </tr>
-      <tr>
-        <td>j</td>
-        <td>
-          Moves program pointer to random position and removes itself from
-          program
-        </td>
-      </tr>
-      <tr>
-        <td>J</td>
-        <td>Moves program pointer to random position</td>
-      </tr>
-      <tr>
-        <td>c</td>
-        <td>
-          Replaces opcode at random position with random opcode and removes
-          itself from program
-        </td>
-      </tr>
-      <tr>
-        <td>C</td>
-        <td>Replaces opcode at random position with random opcode</td>
-      </tr>
+      <tbody>
+        <tr>
+          <td>{">"}</td>
+          <td>Moves the pointer to the right</td>
+        </tr>
+        <tr>
+          <td>{"<"}</td>
+          <td>Moves the pointer to the left</td>
+        </tr>
+        <tr>
+          <td>+</td>
+          <td>Increments the memory cell under the pointer</td>
+        </tr>
+        <tr>
+          <td>-</td>
+          <td>Decrements the memory cell under the pointer</td>
+        </tr>
+        <tr>
+          <td>.</td>
+          <td>
+            Triggers a note determined by the memory cell under the pointer
+          </td>
+        </tr>
+        <tr>
+          <td>,</td>
+          <td>
+            Reads value from input - will be only available in O_C version
+          </td>
+        </tr>
+        <tr>
+          <td>[</td>
+          <td>
+            Jumps past the matching ] if the cell under the pointer is 0. If no
+            matching ] is found proceedes as usual
+          </td>
+        </tr>
+        <tr>
+          <td>]</td>
+          <td>
+            Jumps back to the matching [ if the cell under the pointer is
+            nonzero. If no matching [ is found proceedes as usual
+          </td>
+        </tr>
+        <tr>
+          <td>j</td>
+          <td>
+            Moves program pointer to random position and removes itself from
+            program
+          </td>
+        </tr>
+        <tr>
+          <td>J</td>
+          <td>Moves program pointer to random position</td>
+        </tr>
+        <tr>
+          <td>c</td>
+          <td>
+            Replaces opcode at random position with random opcode and removes
+            itself from program
+          </td>
+        </tr>
+        <tr>
+          <td>C</td>
+          <td>Replaces opcode at random position with random opcode</td>
+        </tr>
+      </tbody>
     </table>
   </section>
 );
