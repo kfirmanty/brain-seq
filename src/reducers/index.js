@@ -166,7 +166,7 @@ const tick = state => {
     default:
       break;
   }
-  programPointer = (programPointer + 1) % program.length;
+  programPointer = (programPointer + 1) % program.length || 0;
   return Object.assign({}, state, {
     interpreter: merge(state.interpreter, {
       memory,
