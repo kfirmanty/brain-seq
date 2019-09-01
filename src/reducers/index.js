@@ -8,9 +8,10 @@ const initialState = {
     memoryPointer: 0,
     programPointer: 0,
     program: "",
-    loopId: 0,
     memorySize: 16,
-    scale: "chromatic"
+    scale: "chromatic",
+    maxMemoryVal: 16,
+    minMemoryVal: 0
   },
   running: false
 };
@@ -29,8 +30,10 @@ const randInt = to => {
 const memoryToFreq = (scaleName, val) => {
   const scale = scales[scaleName];
   const baseFreq = 440;
-  const step = 440 / 12;
-  return baseFreq + step * scale[val % scale.length];
+  const octave = Math.floor(val / scale.length);
+  const octaveFreq = baseFreq + baseFreq * octave;
+  const step = Math.pow(1.0595, scale[val % scale.length]);
+  return octaveFreq * step;
 };
 
 const randomOpcode = () => {
@@ -59,15 +62,23 @@ const tick = state => {
     programPointer,
     program,
     memorySize,
-    scale
+    scale,
+    maxMemoryVal,
+    minMemoryVal
   } = interpreter;
   const currentOp = program[programPointer];
   switch (currentOp) {
     case "+":
-      memory[memoryPointer] = (memory[memoryPointer] || 0) + 1;
+      memory[memoryPointer] =
+        (memory[memoryPointer] || 0) + 1 > maxMemoryVal
+          ? minMemoryVal
+          : (memory[memoryPointer] || 0) + 1;
       break;
     case "-":
-      memory[memoryPointer] = Math.max((memory[memoryPointer] || 0) - 1, 0);
+      memory[memoryPointer] = Math.max(
+        (memory[memoryPointer] || 0) - 1,
+        minMemoryVal
+      );
       break;
     case ">":
       memoryPointer = Math.min(memoryPointer + 1, memorySize);
@@ -119,16 +130,12 @@ const rootReducer = (state = initialState, action) => {
       });
     case "INTERPRETER_STARTED":
       return Object.assign({}, state, {
-        interpreter: merge(state.interpreter, {
-          loopId: action.loopId
-        }),
         synth: action.synth,
         running: true
       });
     case "INTERPRETER_STOPPED":
       return Object.assign({}, state, {
         synth: null,
-        interpreter: merge(state.interpreter, { loopId: 0 }),
         running: false
       });
     case "SET_TEMPO":

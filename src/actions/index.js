@@ -18,14 +18,17 @@ export const setScale = scale => ({
 
 const tick = () => ({ type: "TICK" });
 
-const interpreterStarted = ({ loopId, synth }) => ({
-  type: "INTERPRETER_STARTED",
-  loopId,
-  synth
-});
+const tickLoop = () => (dispatch, getState) => {
+  const { interpreter, running } = getState();
+  if (running) {
+    dispatch(tick());
+    setTimeout(() => dispatch(tickLoop()), bpmToMs(interpreter.bpm));
+  }
+};
 
-const interpreterStopped = () => ({
-  type: "INTERPRETER_STOPPED"
+const interpreterStarted = ({ synth }) => ({
+  type: "INTERPRETER_STARTED",
+  synth
 });
 
 const initSynth = () => {
@@ -34,19 +37,15 @@ const initSynth = () => {
   return saw;
 };
 
-export const stopInterpreter = () => (dispatch, getState) => {
-  const { interpreter } = getState();
-  console.log("STOP INTERPRETER", interpreter);
-
-  clearInterval(interpreter.loopId);
-  dispatch(interpreterStopped());
-};
+export const stopInterpreter = () => ({
+  type: "INTERPRETER_STOPPED"
+});
 
 export const startInterpreter = () => (dispatch, getState) => {
   const { interpreter } = getState();
   console.log("START INTERPRETER", interpreter);
 
-  const loopId = setInterval(() => dispatch(tick()), bpmToMs(interpreter.bpm));
   const synth = initSynth();
-  dispatch(interpreterStarted({ loopId, synth }));
+  dispatch(interpreterStarted({ synth }));
+  dispatch(tickLoop());
 };

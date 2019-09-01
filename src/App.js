@@ -144,8 +144,8 @@ const Tempo = ({ bpm, dispatch }) => (
     <p>Tempo:</p>
     <input
       type="text"
-      value={bpm}
-      onChange={e => dispatch(setTempo(e.target.value))}
+      defaultValue={bpm}
+      onBlur={e => dispatch(setTempo(e.target.value))}
     />
   </div>
 );
