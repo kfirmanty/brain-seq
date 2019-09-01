@@ -119,10 +119,11 @@ const tick = state => {
           : memory[memoryPointer] - 1;
       break;
     case ">":
-      memoryPointer = Math.min(memoryPointer + 1, memorySize);
+      memoryPointer = memoryPointer + 1 >= memorySize ? 0 : memoryPointer + 1;
       break;
     case "<":
-      memoryPointer = Math.max(memoryPointer - 1, 0);
+      memoryPointer =
+        memoryPointer - 1 < 0 ? memorySize - 1 : memoryPointer - 1;
       break;
     case ".":
       synth.play({
