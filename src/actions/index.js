@@ -32,9 +32,30 @@ const interpreterStarted = ({ synth }) => ({
 });
 
 const initSynth = () => {
-  const saw = new Wad({ source: "sine" });
-  saw.setVolume(0.5);
-  return saw;
+  return new Wad({
+    source: "sawtooth",
+    volume: 0.5,
+    env: {
+      attack: 0.0,
+      decay: 0.0,
+      sustain: 1.0,
+      hold: 0.5,
+      release: 1
+    },
+    filter: {
+      type: "lowpass",
+      frequency: 600,
+      q: 0,
+      env: {
+        frequency: 800,
+        attack: 0.1,
+        hold: 0.0,
+        release: 0.0,
+        sustain: 0.0,
+        decay: 0.5
+      }
+    }
+  });
 };
 
 export const stopInterpreter = () => ({

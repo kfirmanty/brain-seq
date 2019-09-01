@@ -126,7 +126,7 @@ const tick = state => {
       break;
     case ".":
       synth.play({
-        env: { hold: 0.5, release: 1 },
+        env: { hold: 0.5 },
         pitch: memoryToFreq(scale, memory[memoryPointer])
       }); //FIXME: awful side effect
       break;
