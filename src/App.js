@@ -63,91 +63,57 @@ const PlayButton = ({ dispatch, running }) => (
   </p>
 );
 
+const opsDescriptions = {
+  ">": "Moves the pointer to the right",
+  "<": "Moves the pointer to the left",
+  "+": "Increments the memory cell under the pointer",
+  "-": "Decrements the memory cell under the pointer",
+  ".": "Triggers a note determined by the memory cell under the pointer",
+  ",": "Reads value from input - will be only available in O_C version",
+  "[":
+    "Jumps past the matching ] if the cell under the pointer is 0. If no matching ] is found proceedes as usual",
+  "]":
+    "Jumps back to the matching [ if the cell under the pointer is nonzero. If no matching [ is found proceedes as usual",
+  j: "Moves program pointer to random position and removes itself from program",
+  J: "Moves program pointer to random position",
+  c:
+    "Replaces opcode at random position with random opcode and removes itself from program",
+  C: "Replaces opcode at random position with random opcode",
+  r:
+    "Inserts random value to cell under the pointer and removes itself from program",
+  R: "Inserts random value to cell under the pointer"
+};
+
+const Table = ({ from }) => (
+  <table>
+    <tbody>
+      {Object.keys(from).map(el => (
+        <tr key={el}>
+          <td>{el}</td>
+          <td>{from[el]}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
+
+const examples = {
+  ".+": "Play a sequence of notes raising by one scale step",
+  ".+.+.+--":
+    "Plays repeated sequences of three rising notes starting one scale step higher on each repetition",
+  "++++.+++.+.+.+.--.--.+.-------":
+    'Plays the notes from the "lick" - set scale to minor'
+};
+
 const Description = () => (
   <section>
     <h2>Description</h2>
     Based on <a href="https://esolangs.org/wiki/Brainfuck">brainfuck</a>{" "}
     programming language with additional extensions for music.
     <h3>Opcodes</h3>
-    <table>
-      <tbody>
-        <tr>
-          <td>{">"}</td>
-          <td>Moves the pointer to the right</td>
-        </tr>
-        <tr>
-          <td>{"<"}</td>
-          <td>Moves the pointer to the left</td>
-        </tr>
-        <tr>
-          <td>+</td>
-          <td>Increments the memory cell under the pointer</td>
-        </tr>
-        <tr>
-          <td>-</td>
-          <td>Decrements the memory cell under the pointer</td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>
-            Triggers a note determined by the memory cell under the pointer
-          </td>
-        </tr>
-        <tr>
-          <td>,</td>
-          <td>
-            Reads value from input - will be only available in O_C version
-          </td>
-        </tr>
-        <tr>
-          <td>[</td>
-          <td>
-            Jumps past the matching ] if the cell under the pointer is 0. If no
-            matching ] is found proceedes as usual
-          </td>
-        </tr>
-        <tr>
-          <td>]</td>
-          <td>
-            Jumps back to the matching [ if the cell under the pointer is
-            nonzero. If no matching [ is found proceedes as usual
-          </td>
-        </tr>
-        <tr>
-          <td>j</td>
-          <td>
-            Moves program pointer to random position and removes itself from
-            program
-          </td>
-        </tr>
-        <tr>
-          <td>J</td>
-          <td>Moves program pointer to random position</td>
-        </tr>
-        <tr>
-          <td>c</td>
-          <td>
-            Replaces opcode at random position with random opcode and removes
-            itself from program
-          </td>
-        </tr>
-        <tr>
-          <td>C</td>
-          <td>Replaces opcode at random position with random opcode</td>
-        </tr>
-        <tr>
-          <td>r</td>
-          <td>
-            Inserts random value to cell under the pointer and removes itself
-            from program
-          </td>
-        </tr>
-        <tr>
-          <td>R</td>
-          <td>Inserts random value to cell under the pointer</td>
-        </tr>
-      </tbody>
-    </table>
+    <Table from={opsDescriptions} />
+    <h3>Examples</h3>
+    <Table from={examples} />
   </section>
 );
 
